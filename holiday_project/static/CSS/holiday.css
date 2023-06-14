@@ -1,0 +1,67 @@
+.table-striped.custom-stripe tbody tr:nth-of-type(odd) {
+    background-color: #b8daff;
+  }
+  .custom-color {
+    background-color: #007bff;
+    color:white;
+  }
+  body{
+    font-family: 'Poppins', sans-serif;
+  }
+  td{
+    font-weight: 600;
+  }
+  .drop_t_f{
+    border:1px solid black;
+  }
+
+.table{
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+}
+.fa{
+    border:1px solid black;
+    text-align: center;
+    width: 25px;
+}
+.abc{
+    border-bottom: 1px solid black;
+    margin-top: -40px;
+}
+.table td, .table th {
+    border-top:none;
+}
+.text-primary,.outers{
+    cursor: pointer;
+}
+.hidden{
+    display: none;
+}
+tr{
+    line-height:10px;
+}
+.mystyle{
+    display: flex;
+}
+.my-div-opener.open-menu{
+  position:absolute;
+  display:flex;
+}
+.my-div-opener{
+  position:absolute;
+  display:none;
+  /* right:45px; */
+  /* margin-top: -37px; */
+}
+.outers{
+  line-height: 1.2;
+  word-break: break-word;
+  width:250px;
+
+}
+.box{
+  display: none;
+}
+.active{
+  display: none;
+}

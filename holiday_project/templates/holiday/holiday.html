@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- font family -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'CSS/holiday.css' %}">
+    <title>Table</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>   
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <body>
+      <div class="container-fluid">
+    <br><br><br>
+    <table class="table table-striped custom-stripe">
+        <thead class="custom-color">
+          <tr>
+            <th scope="col">Year</th>
+            <th scope="col">Month</th>
+            <th scope="col">Day</th>
+            <th scope="col">Weekday</th>
+            <th scope="col">Holiday</th>
+            <th scope="col">Remarks</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {% for query in query%}
+            <td>{{query.year}}</td>
+            <td>{{query.month}}</td>
+            <td>{{query.day}}</td>
+            <td>{{query.weekday}}</td>
+            <td>
+              <select onclick="select_click({{query.id}})"  id="select-{{query.id}}">
+                {% if query.is_holiday == True %}
+                    <option value=True selected>Yes</option>
+                    <option value=False  id="false_opt">No</option>
+                {% else %}
+                    <option value=False selected>No</option>
+                    <option value=True id="true_opt">Yes</option>
+                    {% endif %}
+                  </select>
+             </td>
+             <td class="text-primary">
+          
+                <p id = "remarks-{{query.id}}" class="outers" class="extra" onclick="remarks_hide({{query.id}})">{{query.remarks}}</p>
+
+                <div class="my-div-opener " id="remarks_class-{{query.id}}">
+                  <input id="input-{{query.id}}" name="hiddenfield" value="{{query.remarks}}" type="text" autofocus>
+                  <i style="font-size:24px;" id="done" class="fa" onclick="done_remarks({{query.id}})">&#xf00c;</i>
+                  <i style="font-size:24px" id="cancel" class="fa" onclick="cancel_remarks({{query.id}})">&#xf00d;</i>
+              </div>
+            </div>
+              
+              
+             </td> 
+          </tr>
+          {% endfor %}
+          <tr>
+            <td style="display:flex;background-color:white;"><i style="font-size:24px" class="fa">&#xf104;</i> &nbsp;&nbsp; <i style="font-size:24px;" class="fa">&#xf105;</i></td>
+   
+<script>
+
+var outers = document.querySelectorAll('.outers');
+outers.forEach(function(outer) {
+  outer.addEventListener('click', function() {
+    var activeOuters = document.querySelectorAll('.outers.active');
+    activeOuters.forEach(function(activeOuter) {
+      activeOuter.classList.remove('active');
+      activeOuter.classList.add('not-active');
+    });
+    this.classList.remove('not-active');
+    this.classList.add('active');
+  });
+});
+
+
+
+var outers = document.querySelectorAll('.outers');
+outers.forEach(function(outer) {
+  outer.addEventListener('click', function() {
+    var myDivOpener = document.querySelectorAll('.my-div-opener');
+    myDivOpener.forEach(function(divOpener) {
+      divOpener.style.display = '';
+      if (divOpener !== this.nextElementSibling) {
+        divOpener.classList.remove('open-menu');
+      }
+    });
+    this.nextElementSibling.classList.toggle('open-menu');
+  });
+});
+
+
+
+
+function select_click(id)
+{
+  var select_value = document.getElementById("select-"+id).value;
+  console.log(select_value);
+  console.log(id);
+  $.ajax({
+    url: "{% url 'holidayupdate' %}",
+    dataType: "json",
+    type: 'POST',
+    data: {'select_value':select_value,
+    'id':id,
+    csrfmiddlewaretoken: '{{ csrf_token }}',
+},
+    success: function(data){
+        console.log(data);
+
+    },
+});
+return false;
+}
+
+
+function done_remarks(remarks_id){
+  var remarks_input_value = document.getElementById("input-"+remarks_id).value;
+  console.log(remarks_input_value);
+  console.log(remarks_id);
+  $.ajax({
+    url: "{% url 'remarksview' %}",
+    dataType: "json",
+    type: 'POST',
+    data: {'remarks_input_value':remarks_input_value,
+    'remarks_id':remarks_id,
+    csrfmiddlewaretoken: '{{ csrf_token }}',
+},
+    success: function(data){
+        id = data['data'].id; 
+        data = data['data'].remarks
+        document.getElementById("remarks_class-"+id).style.display="none";   
+        remark = `<p id='${id}'>${data}</p>`
+        console.log(remark);
+        $("#remarks-"+id).empty().prepend(remark);
+        document.getElementById("remarks-"+id).style.display="block";
+    },
+});
+return false;
+}
+function cancel_remarks(remarks_id){
+  var remarks_input_value = '';
+  console.log(remarks_input_value);
+  console.log(remarks_id);
+  $.ajax({
+    url: "{% url 'remarksviewcancel' %}",
+    dataType: "json",
+    type: 'POST',
+    data: {'remarks_input_value':remarks_input_value,
+    'remarks_id':remarks_id,
+    csrfmiddlewaretoken: '{{ csrf_token }}',
+},
+    success: function(data){
+      id = data['data'].id; 
+      {% comment %} document.getElementById("remarks-"+id).style.display="block";  
+      document.getElementById("remarks-"+id).innerHTML=data['data'].remarks; {% endcomment %}
+      document.getElementById("remarks_class-"+id).style.display="none"; 
+      document.getElementById("remarks-"+id).style.display="block";     
+    },
+});
+return false;
+}
+  </script>
+</body>
+</html>
